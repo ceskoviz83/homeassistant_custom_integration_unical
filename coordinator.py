@@ -11,11 +11,9 @@ from homeassistant.const import (
     CONF_SCAN_INTERVAL,
     CONF_DEVICE_ID,
 )
+
 from homeassistant.core import DOMAIN, HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-
-from core.homeassistant.const import CONF_DEVICE_ID,CONF_HOST,CONF_PORT
-#from .api import
 
 from unical import register,Unical,modbus
 from .const import DEFAULT_SCAN_INTERVAL,DOMAIN,REGISTRY_PATH
