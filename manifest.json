@@ -10,7 +10,7 @@
   "homekit": {},
   "iot_class": "local_polling",
   "quality_scale": "bronze",
-  "requirements": ["unical"],
+  "requirements": ["unical@git+https://github.com/ceskoviz83/unical.git@main"],
   "version": "0.0.1",
   "ssdp": [],
   "zeroconf": []
