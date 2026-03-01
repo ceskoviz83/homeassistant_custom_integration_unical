@@ -1,0 +1,17 @@
+{
+  "domain": "unical_owerone",
+  "name": "Integration of Unical Owerone Modbus",
+  "codeowners": [
+    "@ceskoviz83"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://www.home-assistant.io/integrations/unical_owerone",
+  "homekit": {},
+  "iot_class": "local_polling",
+  "quality_scale": "bronze",
+  "requirements": ["unical"],
+  "version": "0.0.1",
+  "ssdp": [],
+  "zeroconf": []
+}
