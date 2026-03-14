@@ -21,7 +21,6 @@ from .coordinator import UnicalCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: UnicalConfigEntry,
@@ -33,28 +32,28 @@ async def async_setup_entry(
 
     # Enumerate all the sensors in your data value from your DataUpdateCoordinator and add an instance of your sensor class
     # to a list for each one.
-    # This maybe different in your specific case, depending on how your data is structured
+    # This maybe different in your specific case, depending on how your data is
 
-    temp_sensors = [TempSensor(coordinator,   coordinator.data.registry[id])
+    sensors = []
+
+    sensors += [TempSensor(coordinator,   coordinator.data.registry[id])
                     for id in coordinator.data.registry
                     if coordinator.data.registry[id].entity_type == EntityType.TEMP_SENSOR]
 
-    percent_sensor = [PercentageSensor(coordinator,   coordinator.data.registry[id])
+    sensors += [PercentageSensor(coordinator,   coordinator.data.registry[id])
                       for id in coordinator.data.registry
                       if coordinator.data.registry[id].entity_type == EntityType.PERCENT_SENSOR]
 
-    press_sensor = [PressureSensor(coordinator,   coordinator.data.registry[id])
+    sensors += [PressureSensor(coordinator,   coordinator.data.registry[id])
                     for id in coordinator.data.registry
                     if coordinator.data.registry[id].entity_type == EntityType.PRES_SENSOR]
 
-
-    duration_sensor = [DurationSensor(coordinator,   coordinator.data.registry[id])
+    sensors += [DurationSensor(coordinator,   coordinator.data.registry[id])
                        for id in coordinator.data.registry
                        if coordinator.data.registry[id].entity_type == EntityType.DURATION_SENSOR]
 
     # Create the sensors.
-
-    async_add_entities(temp_sensors + percent_sensor + press_sensor + duration_sensor)
+    async_add_entities(sensors)
 
 
 class AnalogSensor(CoordinatorEntity, SensorEntity):
@@ -76,7 +75,13 @@ class AnalogSensor(CoordinatorEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         """Update sensor with latest data from coordinator."""
         # This method is called by your DataUpdateCoordinator when a successful update runs.
-        self.register = self.coordinator.get_entity_by_id(self.device_id)
+        res = self.coordinator.get_entity_by_id(self.device_id)
+
+        if res is None :
+            _LOGGER.error(f"Retrieved register is None - {self.device_id}")
+        else:
+            self.register = res
+
         _LOGGER.debug("Device: %s", self.register)
         self.async_write_ha_state()
 
@@ -108,13 +113,19 @@ class AnalogSensor(CoordinatorEntity, SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
-        return self.register.name
+        return f"{self.register.name}"
+
 
     @property
-    def native_value(self) -> int | float:
+    def native_value(self) -> int | float | None:
         """Return the state of the entity."""
         # Using native value and native unit of measurement, allows you to change units
         # in Lovelace and HA will automatically calculate the correct value.
+
+        if self.register is None:
+            return None
+
+
         return float(self.register.value)
 
     @property
@@ -122,7 +133,7 @@ class AnalogSensor(CoordinatorEntity, SensorEntity):
         """Return unit of temperature."""
 
         if self.register is None:
-            pass
+            return ""
 
         return str(self.register.unit)
 
@@ -161,7 +172,6 @@ class TempSensor(AnalogSensor):
 class PressureSensor(AnalogSensor):
     """Implementation of a sensor."""
 
-
     @property
     def device_class(self) -> str:
         """Return device class."""
@@ -171,15 +181,19 @@ class PressureSensor(AnalogSensor):
 class PercentageSensor(AnalogSensor):
     """Implementation of a sensor."""
 
+    _attr_icon = "mdi:percent"
+
     @property
     def device_class(self) -> str:
         """Return device class."""
         # https://developers.home-assistant.io/docs/core/entity/sensor/#available-device-classes
-        return SensorDeviceClass.SPEED
+        return "percentage"
 
 
 class DurationSensor(AnalogSensor):
     """Implementation of a sensor."""
+
+    _attr_icon = "mdi:clock"
 
     @property
     def device_class(self) -> str:

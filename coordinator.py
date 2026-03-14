@@ -41,7 +41,7 @@ class UnicalCoordinator(DataUpdateCoordinator):
         self.host = config_entry.data[CONF_HOST]
         self.port = config_entry.data[CONF_PORT]
         self.device_id = config_entry.data[CONF_DEVICE_ID]
-        self.REGISTRY_FILE = REGISTRY_PATH
+        self.REGISTRY_FILES = REGISTRY_PATH
 
         # set variables from options.  You need a default here incase options have not been set
         self.poll_interval = config_entry.options.get(
@@ -62,19 +62,14 @@ class UnicalCoordinator(DataUpdateCoordinator):
 
         # Initialise your api here
 
-
-        self._modbus_client = modbus.Modbus(address = self.host,
-                                            registry_file = self.REGISTRY_FILE,
+        self._modbus_client =  modbus.Modbus(address = self.host,
+                                            registry_file = self.REGISTRY_FILES,
                                             port = self.port,
                                             device_id = self.device_id)
 
         self.api = Unical(modbus_client=self._modbus_client)
 
         return
-
-        #self.api = Unical(host=self.host,
-        #                     port=self.port,
-        #                     device_id=self.device_id)
 
 
     async def async_update_data(self):
@@ -98,9 +93,12 @@ class UnicalCoordinator(DataUpdateCoordinator):
         return DeviceData(registry = data)
 
 
-    def get_entity_by_id(self, id : int) -> register.Register | None:
+    def get_entity_by_id(self, id : int | str) -> register.Register | None:
         """Return device by device id."""
         # Called by the binary sensors and sensors to get their updated data from self.data
+
+        id = str(id)
+
         try:
             return [ self.data.registry[address]  for address  in self.data.registry  if address == id][0]
         except IndexError:

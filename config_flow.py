@@ -49,7 +49,7 @@ async def validate_input(hass: HomeAssistant,
                                         device_id=data[CONF_DEVICE_ID]))
 
 
-    if not await unical.check_connection():
+    if not  unical.check_connection():
         raise InvalidAuth
 
     # If you cannot connect:
