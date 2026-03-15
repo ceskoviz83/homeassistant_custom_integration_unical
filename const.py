@@ -3,7 +3,10 @@
 import os
 
 DOMAIN = "unical_owerone"
-REGISTRY_JSON = ["sensors.json","digital_switch.json","status.json"]
+REGISTRY_JSON = ["sensors.json",
+                 "digital_switch.json",
+                 "status.json",
+                 "setpoint.json"]
 DEFAULT_SCAN_INTERVAL = 30
 
 INTEGRATION_PATH = os.path.dirname(__file__)

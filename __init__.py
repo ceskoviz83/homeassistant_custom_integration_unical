@@ -14,7 +14,10 @@ from .coordinator import UnicalCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR , Platform.SELECT]
+PLATFORMS: list[Platform] = [Platform.SENSOR ,
+                             Platform.SELECT,
+                             Platform.BINARY_SENSOR,
+                             Platform.CLIMATE]
 
 @dataclass
 class RuntimeData:
